@@ -1,0 +1,24 @@
+{
+  "name": "execut/yii2-images",
+  "description": "Yii2 eXeCUT images",
+  "keywords": ["yii2", "images"],
+  "homepage": "https://github.com/execut/yii2-images",
+  "type": "library",
+  "license": "Apache-2.0",
+  "support": {
+    "issues": "https://github.com/execut/yii2-images/issues?state=open",
+    "wiki": "https://github.com/execut/yii2-images/wiki",
+    "source": "https://github.com/execut/yii2-images"
+  },
+  "require": {
+    "yiisoft/yii2": "~2.0.6",
+    "execut/yii2-base": "*",
+    "execut/yii2-crud": "*",
+    "execut/yii2-files": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "execut\\images\\": ""
+    }
+  }
+}
