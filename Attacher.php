@@ -19,23 +19,35 @@ class Attacher extends Migration
                 'title',
                 'alt'
             ];
+
             foreach ($attributes as $attribute) {
                 $cacheKey = __CLASS__ . '_' . $table . '_' . $attribute;
                 if ($cache->get($cacheKey)) {
                     continue;
                 }
+                $tableSchema = $this->db->getTableSchema($table);
+                if (!$tableSchema) {
+                    continue 2;
+                }
 
-                $i->table($table)->addColumn($attribute, $this->string());
+                if (!$tableSchema->getColumn($attribute)) {
+                    $i->table($table)->addColumn($attribute, $this->string());
+                }
+
                 $cache->set($cacheKey, 1);
             }
-            foreach ($this->sizes as $size => $sizeParams) {
-                $sizeName = 'size_' . $size;
+
+            foreach ($this->sizes as $sizeName => $sizeParams) {
                 $cacheKey = __CLASS__ . '_' . $table . '_' . $sizeName;
                 if ($cache->get($cacheKey)) {
                     continue;
                 }
 
-                $isAttached = $this->db->getTableSchema($table)->getColumn($sizeName);
+                $tableSchema = $this->db->getTableSchema($table);
+                if (!$tableSchema) {
+                    continue 2;
+                }
+                $isAttached = $tableSchema->getColumn($sizeName);
                 if (!$isAttached) {
                     $helper = new MigrationHelper([
                         'table' => $i->table($table),
