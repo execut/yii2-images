@@ -6,17 +6,57 @@ namespace execut\images\crudFields;
 
 use execut\crudFields\fields\HasOneSelect2;
 use execut\files\models\File;
+use yii\helpers\Html;
+use yii\helpers\UnsetArrayValue;
 
 class Plugin extends \execut\crudFields\Plugin
 {
+    public $previewDataAttribute = 'img_100';
     public function getFields() {
+//        $thumbAttributes = array_keys(\yii::$app->getModule('images')->getSizes());
+//        $result = [];
+//        foreach ($thumbAttributes as $thumbAttribute) {
+//            $result[$thumbAttribute] = [
+//                'attribute' => $thumbAttribute,
+//            ];
+//        }
+//
+//        return $result;
+//
+
+        $value = function ($row) {
+            $extensionAttribute = \yii::$app->getModule('images')->extensionAttribute;
+
+            return Html::a(Html::img(['/images/frontend/index', 'id' => $row->id, 'extension' => strtolower($row->$extensionAttribute), 'dataAttribute' => $this->previewDataAttribute]), [
+                '/images/frontend/index',
+                'id' => $row->id,
+                'extension' => strtolower($row->$extensionAttribute),
+            ]);
+        };
         return [
-            [
-                'attribute' => 'alt',
+            'preview' => [
+                'module' => 'images',
+                'attribute' => 'preview',
+                'scope' => false,
+                'field' => [
+                    'format' => 'raw',
+                    'displayOnly' => true,
+                    'value' => function ($form, $widget) use ($value) {
+                        return $value($widget->model);
+                    },
+                ],
+                'column' => [
+                    'filter' => false,
+                    'format' => 'raw',
+                    'value' => $value,
+                ],
             ],
-            [
-                'attribute' => 'title',
-            ],
+//            [
+//                'attribute' => 'alt',
+//            ],
+//            [
+//                'attribute' => 'title',
+//            ],
         ];
     }
 }
