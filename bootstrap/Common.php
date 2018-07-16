@@ -12,16 +12,20 @@ use Imagine\Image\ImageInterface;
 
 class Common extends Bootstrap
 {
-    public $_defaultDepends = [
-        'modules' => [
-            'images' => [
-                'class' => Module::class,
+    public $moduleId = 'images';
+    public function getDefaultDepends()
+    {
+        return [
+            'modules' => [
+                $this->moduleId => [
+                    'class' => Module::class,
+                ],
             ],
-        ],
-        'bootstrap' => [
-            'images',
-        ],
-    ];
+            'bootstrap' => [
+                $this->moduleId,
+            ],
+        ];
+    }
 
     public function bootstrap($app)
     {
@@ -37,22 +41,5 @@ class Common extends Bootstrap
                 'execut/images' => 'images.php',
             ],
         ];
-    }
-
-    protected function attachToModules() {
-        $imagesModule = \yii::$app->getModule('images');
-        $models = $imagesModule->getAttachedModels();
-        $sizes = $imagesModule->getSizes();
-        $tables = [];
-        foreach ($models as $model) {
-            $tables[] = $model::tableName();
-        }
-
-        $attacher = new Attacher([
-            'tables' => $tables,
-            'sizes' => $sizes,
-        ]);
-
-        $attacher->safeUp();
     }
 }

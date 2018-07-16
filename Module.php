@@ -18,8 +18,9 @@ use yii\web\Application;
 
 class Module extends \yii\base\Module implements Plugin, BootstrapInterface
 {
-    public $dataAttribute = null;
-    public $extensionAttribute = null;
+    public $dataAttribute = 'data';
+    public $extensionAttribute = 'extension';
+    public $filesModuleId = 'files';
 
     public function behaviors()
     {
@@ -31,7 +32,7 @@ class Module extends \yii\base\Module implements Plugin, BootstrapInterface
         ];
     }
 
-    public function getSizes($file) {
+    public function getSizes($file = null) {
         return $this->getPluginsResults(__FUNCTION__, false, func_get_args());
     }
 
@@ -43,7 +44,23 @@ class Module extends \yii\base\Module implements Plugin, BootstrapInterface
     {
         $this->attachToModels();
 
-//        $this->attachToModules();
+        $this->attachToModules();
+    }
+
+    protected function attachToModules() {
+        $models = $this->getAttachedModels();
+        $sizes = $this->getSizes();
+        $tables = [];
+        foreach ($models as $model) {
+            $tables[] = $model::tableName();
+        }
+
+        $attacher = new Attacher([
+            'tables' => $tables,
+            'sizes' => $sizes,
+        ]);
+
+        $attacher->safeUp();
     }
 
     public function attachToModels() {
