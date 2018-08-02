@@ -15,7 +15,7 @@
     "execut/yii2-base": "*",
     "execut/yii2-crud": "*",
     "execut/yii2-files": "*",
-    "yiisoft/yii2-imagine": "~2.1.0"
+    "yiisoft/yii2-imagine": "*"
   },
   "autoload": {
     "psr-4": {
