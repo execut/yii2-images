@@ -7,6 +7,7 @@ namespace execut\images;
 
 use execut\dependencies\PluginBehavior;
 use execut\files\models\File;
+use Imagine\Image\ImageInterface;
 use Imagine\Image\ManipulatorInterface;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
