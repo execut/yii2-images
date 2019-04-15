@@ -53,6 +53,16 @@ class Plugin extends \execut\crudFields\Plugin
                     'value' => $value,
                 ],
             ],
+            [
+                'attribute' => 'width',
+                'displayOnly' => true,
+                'module' => 'images',
+            ],
+            [
+                'attribute' => 'height',
+                'displayOnly' => true,
+                'module' => 'images',
+            ],
 //            [
 //                'attribute' => 'alt',
 //            ],

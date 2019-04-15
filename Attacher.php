@@ -14,7 +14,9 @@ class Attacher extends \execut\yii\migration\Attacher
     public $sizes = [];
     protected $attributes = [
         'title',
-        'alt'
+        'alt',
+        'width',
+        'height',
     ];
 
     protected function getVariations () {
@@ -30,7 +32,13 @@ class Attacher extends \execut\yii\migration\Attacher
                 }
 
                 if (!$tableSchema->getColumn($attribute)) {
-                    $i->table($table)->addColumn($attribute, $this->string());
+                    if ($attribute === 'title' || $attribute === 'alt') {
+                        $type = $this->string();
+                    } else {
+                        $type = $this->integer();
+                    }
+
+                    $i->table($table)->addColumn($attribute, $type);
                 }
             }
 
