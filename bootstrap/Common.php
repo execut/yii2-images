@@ -12,6 +12,7 @@ use Imagine\Image\ImageInterface;
 
 class Common extends Bootstrap
 {
+    public $isBootstrapI18n = true;
     public $moduleId = 'images';
     public function getDefaultDepends()
     {
@@ -23,22 +24,6 @@ class Common extends Bootstrap
             ],
             'bootstrap' => [
                 $this->moduleId,
-            ],
-        ];
-    }
-
-    public function bootstrap($app)
-    {
-        parent::bootstrap($app);
-        $this->registerTranslations($app);
-    }
-
-    public function registerTranslations($app) {
-        $app->i18n->translations['execut/images'] = [
-            'class' => 'yii\i18n\PhpMessageSource',
-            'basePath' => '@execut/yii2-images/messages',
-            'fileMap' => [
-                'execut/images' => 'images.php',
             ],
         ];
     }

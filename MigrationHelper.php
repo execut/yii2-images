@@ -17,7 +17,7 @@ class MigrationHelper extends BaseObject
     public $sizeName = null;
     public function attach() {
         $this->table->addColumns([
-            $this->sizeName => 'bytea',
+            $this->sizeName => $this->table->migration->binary(),
         ]);
     }
 }
