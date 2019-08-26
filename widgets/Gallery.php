@@ -81,8 +81,7 @@ class Gallery extends Widget
 
             echo '<span itemprop="contentUrl" src="' . $image->getUrl($this->dataAttribute) . '" content="' . $image->getUrl($this->dataAttribute) . '"></span>
                     <meta itemprop="caption description" content="' . $this->description . '">
-                    <meta itemprop="datePublished" content="' . str_replace(' ', 'T', $image->created) . '"/>
-                    ';
+                    <meta itemprop="datePublished" content="' . str_replace(' ', 'T', $image->created) . '"/>';
             if ($width = $image->getWidth($this->dataAttribute)) {
                 echo '<meta itemprop="width" content="' . $width . '">';
             }
@@ -129,3 +128,5 @@ class Gallery extends Widget
         }
     }
 }
+
+https://detalika.ru/zapchasti/poisk?searchType=&searchType=code&article=N%20%2090813202&brandId=1046&w9_input=&goodsTypeId=&goodsTypeId%5B%5D=2&goodsTypeId%5B%5D=1&shopId=&minPrice=&maxPrice=&deliveryPartnerSelectedId=&isTriplePass=0&isAvailable=0
