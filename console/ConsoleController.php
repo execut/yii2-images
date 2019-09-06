@@ -25,7 +25,7 @@ class ConsoleController extends Controller
         $totalCount = $q->count();
         $this->stderr('Start resaving ' . $totalCount . " images\n");
         $currentCount = 0;
-        foreach ($q->batch(10) as $files) {
+        foreach ($q->batch(1) as $files) {
             foreach ($files as $file) {
                 $file->scenario = Field::SCENARIO_FORM;
                 $file->save();
