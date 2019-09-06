@@ -9,6 +9,7 @@
 namespace execut\images\widgets;
 
 
+use execut\files\FormatConverter;
 use execut\files\models\File;
 use execut\yii\jui\Widget;
 use yii\bootstrap\Carousel;
@@ -28,10 +29,15 @@ class Gallery extends Widget
             /**
              * @var File $image
              */
-            $img = Html::img($image->getUrl($this->thumbnailAttribute), [
-                'class' => 'product-image',
+            $img = '  <picture>
+    <source type="image/webp" srcset="' . $image->getUrl($this->thumbnailAttribute, FormatConverter::FORMAT_WEBP) . '">
+    <source type="image/jp2" srcset="' . $image->getUrl($this->thumbnailAttribute, FormatConverter::FORMAT_JPEG2000) . '">
+    <source type="image/jxr" srcset="' . $image->getUrl($this->thumbnailAttribute, FormatConverter::FORMAT_JPEG_XR) . '">
+    ' . Html::img($image->getUrl($this->thumbnailAttribute), [
+                    'class' => 'product-image',
 //                    'alt' => $image->getAlt(),
-            ]);
+                ]) . '
+  </picture>';
 
             if ($this->dataAttribute !== $this->thumbnailAttribute) {
                 $img = Html::a($img, $image->getUrl($this->dataAttribute), [

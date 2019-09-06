@@ -6,6 +6,7 @@ namespace execut\images\plugin;
 
 
 use execut\files\models\File;
+use execut\images\Module;
 use execut\images\Plugin;
 use Imagine\Image\ImageInterface;
 use yii\base\Event;
@@ -67,6 +68,8 @@ class Files implements Plugin
 
             $data = fopen($fileName, 'r+');
             $file->$thumbnailAttributeName = $data;
+            $this->makeFormatsForSize($file, $thumbnailAttributeName, $data);
+
             if (!is_string($file->$dataAttribute)) {
                 rewind($file->$dataAttribute);
             }
@@ -89,5 +92,21 @@ class Files implements Plugin
                 'mode' => ImageInterface::THUMBNAIL_INSET,
             ],
         ];
+    }
+
+    /**
+     * @param $file
+     * @param $thumbnailAttributeName
+     * @param bool $data
+     * @param $fileName
+     */
+    protected function makeFormatsForSize($file, $thumbnailAttributeName, $data)
+    {
+        foreach ($this->getFormats() as $format) {
+            $formatAttributeName = Module::getFormatType();
+            $fileNameNew = tempnam(sys_get_temp_dir(), 'test');
+            imagewebp($data, $fileNameNew);
+            $file->$formatAttributeName = fopen($fileName, 'r+');
+        }
     }
 }

@@ -44,10 +44,16 @@ class Behavior extends \yii\base\Behavior
     }
 
     public function onBeforeValidate() {
-        $md5Attribute = \yii::$app->getModule($this->owner->getModuleId())->getColumnName('file_md5');
-        $nameAttribute = \yii::$app->getModule($this->owner->getModuleId())->getColumnName('name');
-        $this->owner->$md5Attribute = null;
-        $this->owner->$nameAttribute = null;
+        /**
+         * @var ActiveRecord $owner
+         */
+        $owner = $this->owner;
+        $md5Attribute = $this->getFilesModule()->getColumnName('file_md5');
+        $nameAttribute = $this->getFilesModule()->getColumnName('name');
+        if ($owner->getDirtyAttributes([$this->getFilesModule()->getColumnName('data')])) {
+            $owner->$md5Attribute = null;
+            $owner->$nameAttribute = null;
+        }
     }
 
     public function onBeforeFileSave() {
@@ -55,6 +61,10 @@ class Behavior extends \yii\base\Behavior
         $sizes = $this->getSizes();
         $dataAttribute = $this->getDataAttribute();
         $data = $file->$dataAttribute;
+//
+//        var_dump($this->owner->attributes);
+//        var_dump($data);
+//        \yii::$app->end();
         if (!$data) {
             return;
         }
@@ -123,6 +133,7 @@ class Behavior extends \yii\base\Behavior
 
             $thumbData = fopen($fileName, 'r+');
             $file->$sizeName = $thumbData;
+            $this->makeFormatsForSize($fileName, $sizeName, $thumbData);
         }
     }
 
@@ -173,5 +184,43 @@ class Behavior extends \yii\base\Behavior
     protected function getSizes()
     {
         return $this->getModule()->getSizes($this->owner);
+    }
+
+    /**
+     * @param $file
+     * @return mixed
+     */
+    protected function getFormats()
+    {
+        return $this->getFilesModule()->getFormats($this->owner);
+    }
+
+    /**
+     * @param $file
+     * @param $thumbnailAttributeName
+     * @param bool $data
+     * @param $fileName
+     */
+    protected function makeFormatsForSize($fileName, $thumbnailAttributeName, $data)
+    {
+        foreach ($this->getFormats() as $format => $params) {
+            $formatAttributeName = $thumbnailAttributeName . '_' . $format;
+            $fileNameNew = tempnam(sys_get_temp_dir(), 'test') . '.' . $format;
+            exec('convert "' . $fileName . '" -quality 50 "' . $fileNameNew . '"', $output, $return);
+            $fileModel = $this->owner;
+            $fileModel->$formatAttributeName = fopen($fileNameNew, 'r+');
+        }
+    }
+
+    public function getDataAttributeForFormat($thumbnailAttributeName, $format) {
+        return $thumbnailAttributeName . '_' . $format;
+    }
+
+    /**
+     * @return \yii\base\Module|null
+     */
+    protected function getFilesModule()
+    {
+        return \yii::$app->getModule($this->owner->getModuleId());
     }
 }

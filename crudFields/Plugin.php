@@ -29,12 +29,41 @@ class Plugin extends \execut\crudFields\Plugin
         $value = function ($row) {
             $module = \yii::$app->getModule($this->moduleId);
             $extensionAttribute = $module->extensionAttribute;
+            $filesModule = $module->getFilesModule();
+            $sizes = $module->getSizes();
+            $formats = $filesModule->getFormats();
+            foreach ($sizes as $sizeName => $size) {
+                if (!empty($size['width'])) {
+                    $width = $size['width'];
+                } else {
+                    $width = '';
+                }
+
+                if (!empty($size['height'])) {
+                    $height = $size['height'];
+                } else {
+                    $height = '';
+                }
+
+                $links[] = Html::a($width . 'x' . $height . ' ' . $row->$extensionAttribute, [
+                    '/' . $module->filesModuleId . '/frontend',
+                    'id' => $row->id,
+                    'dataAttribute' => $sizeName,
+                ]);
+                foreach ($formats as $extension => $format) {
+                    $links[] = Html::a($width . 'x' . $height . ' ' . $extension, [
+                        '/' . $module->filesModuleId . '/frontend',
+                        'id' => $row->id,
+                        'dataAttribute' => $row->getDataAttributeNameForFormat($sizeName, $extension),
+                    ]);
+                }
+            }
 
             return Html::a(Html::img(['/' . $module->filesModuleId . '/frontend/index', 'id' => $row->id, 'extension' => strtolower($row->$extensionAttribute), 'dataAttribute' => $this->previewDataAttribute]), [
                 '/' . $module->filesModuleId . '/frontend/index',
                 'id' => $row->id,
                 'extension' => strtolower($row->$extensionAttribute),
-            ]);
+            ]) . '<div>' . implode('<br>', $links) . '</div>';
         };
         return [
             'preview' => [
@@ -82,13 +111,17 @@ class Plugin extends \execut\crudFields\Plugin
 
 
     protected function attachToModules() {
-        $sizes = \yii::$app->getModule($this->moduleId)->getSizes();
+        $module = \yii::$app->getModule($this->moduleId);
+        $filesModule = $module->getFilesModule();
+        $sizes = $module->getSizes();
+        $formats = $filesModule->getFormats();
 
         $attacher = new Attacher([
             'tables' => [
                 $this->owner->tableName(),
             ],
             'sizes' => $sizes,
+            'formats' => array_keys($formats),
         ]);
 
         $attacher->safeUp();

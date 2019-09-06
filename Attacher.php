@@ -12,6 +12,7 @@ class Attacher extends \execut\yii\migration\Attacher
 {
     public $tables = [];
     public $sizes = [];
+    public $formats = [];
     protected $attributes = [
         'title',
         'alt',
@@ -20,7 +21,7 @@ class Attacher extends \execut\yii\migration\Attacher
     ];
 
     protected function getVariations () {
-        return ['tables', 'sizes', 'attributes'];
+        return ['tables', 'sizes', 'attributes', 'formats'];
     }
 
     public function initInverter(Inverter $i) {
@@ -42,6 +43,8 @@ class Attacher extends \execut\yii\migration\Attacher
                 }
             }
 
+//            var_dump(gd_info());
+//            exit;
             foreach ($this->sizes as $sizeName => $sizeParams) {
                 $tableSchema = $this->db->getTableSchema($table);
                 if (!$tableSchema) {
@@ -54,6 +57,18 @@ class Attacher extends \execut\yii\migration\Attacher
                         'sizeName' => $sizeName,
                     ]);
                     $helper->attach();
+                }
+
+                foreach ($this->formats as $format) {
+                    $formatSizeName = $sizeName . '_' . $format;
+                    $isAttached = $tableSchema->getColumn($formatSizeName);
+                    if (!$isAttached) {
+                        $helper = new MigrationHelper([
+                            'table' => $i->table($table),
+                            'sizeName' => $formatSizeName,
+                        ]);
+                        $helper->attach();
+                    }
                 }
             }
         }
