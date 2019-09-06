@@ -21,7 +21,9 @@ class ConsoleController extends Controller
             $q->andWhere('id>' . $fromId);
         }
 
+        $this->stderr('Getting count images' . "\n");
         $totalCount = $q->count();
+        $this->stderr('Start resaving ' . $totalCount . " images\n");
         $currentCount = 0;
         foreach ($q->batch(10) as $files) {
             foreach ($files as $file) {
