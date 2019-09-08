@@ -39,6 +39,8 @@ class Behavior extends \yii\base\Behavior
         return [
             ActiveRecord::EVENT_BEFORE_UPDATE => 'onBeforeFileSave',
             ActiveRecord::EVENT_BEFORE_INSERT => 'onBeforeFileSave',
+            ActiveRecord::EVENT_AFTER_UPDATE => 'onAfterFileSave',
+            ActiveRecord::EVENT_AFTER_INSERT => 'onAfterFileSave',
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'onBeforeValidate'
         ];
     }
@@ -53,6 +55,13 @@ class Behavior extends \yii\base\Behavior
         if ($owner->getDirtyAttributes([$this->getFilesModule()->getColumnName('data')])) {
             $owner->$md5Attribute = null;
             $owner->$nameAttribute = null;
+        }
+    }
+
+    protected $openFiles = [];
+    public function onAfterFileSave() {
+        foreach ($this->openFiles as $file) {
+            fclose($file);
         }
     }
 
@@ -72,7 +81,7 @@ class Behavior extends \yii\base\Behavior
         if (is_string($data)) {
             $tempFile = tempnam('/tmp', 'temp_');
             file_put_contents($tempFile, $data);
-            $data = fopen($tempFile, 'r+');
+            $this->openFiles[] = $data = fopen($tempFile, 'r+');
         }
 
         $sourceImage = Image::getImagine()->read($data);
@@ -117,7 +126,7 @@ class Behavior extends \yii\base\Behavior
             BaseImage::$thumbnailBackgroundAlpha = 0;
             $image = Image::thumbnail($sourceImage, $width, $height, $mode);
             if (!empty($size['watermark'])) {
-                $watermark = fopen($size['watermark'], 'r+');
+                $this->openFiles[] = $watermark = fopen($size['watermark'], 'r+');
                 $watermark = Image::resize($watermark, $image->getSize()->getWidth() * 2, $image->getSize()->getHeight() * 2, true, true);
                 $watermark = Image::thumbnail($watermark, $image->getSize()->getWidth(), $image->getSize()->getHeight(), ManipulatorInterface::THUMBNAIL_OUTBOUND);
                 $watermark = Image::crop($watermark, $image->getSize()->getWidth(), $image->getSize()->getHeight());
@@ -131,8 +140,9 @@ class Behavior extends \yii\base\Behavior
                 'format' => $file->$extensionAttribute,
             ]);
 
-            $thumbData = fopen($fileName, 'r+');
+            $this->openFiles[] = $thumbData = fopen($fileName, 'r+');
             $file->$sizeName = $thumbData;
+
             $this->makeFormatsForSize($fileName, $sizeName, $thumbData);
         }
     }
@@ -208,7 +218,7 @@ class Behavior extends \yii\base\Behavior
             $fileNameNew = tempnam(sys_get_temp_dir(), 'test') . '.' . $format;
             exec('convert "' . $fileName . '" -quality 50 "' . $fileNameNew . '"', $output, $return);
             $fileModel = $this->owner;
-            $fileModel->$formatAttributeName = fopen($fileNameNew, 'r+');
+            $this->openFiles[] = $fileModel->$formatAttributeName = fopen($fileNameNew, 'r+');
         }
     }
 
