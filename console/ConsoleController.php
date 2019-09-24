@@ -8,15 +8,19 @@ use yii\db\ActiveQuery;
 
 class ConsoleController extends Controller
 {
-    public function actionIndex($fromId = null) {
+    public function actionIndex($fromId = null, $withoutAttribute = null) {
         $filesModule = $this->module->getFilesModule();
         $modelClass = $filesModule->modelClass;
         /**
          * @var ActiveQuery $q
          */
         $q = $modelClass::find()->orderBy('id ASC');
-        if ($fromId !== null) {
+        if (!empty($fromId)) {
             $q->andWhere('id>' . $fromId);
+        }
+
+        if ($withoutAttribute) {
+            $q->andWhere($withoutAttribute . ' is null');
         }
 
         $this->stderr('Getting count images' . "\n");
