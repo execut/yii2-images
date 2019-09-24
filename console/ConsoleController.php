@@ -3,6 +3,7 @@ namespace execut\images\console;
 
 
 use execut\crudFields\fields\Field;
+use yii\base\Exception;
 use yii\console\Controller;
 use yii\db\ActiveQuery;
 
@@ -31,7 +32,11 @@ class ConsoleController extends Controller
         foreach ($ids as $id) {
             $file = $modelClass::findOne($id);
             $file->scenario = Field::SCENARIO_FORM;
-            $file->save();
+            if (!$file->save()) {
+                echo $file->file_md5 . "\n";
+                $this->stderr($file  . ' resave errors: ' . var_export($file->errors, true) . "\n");
+            }
+
             $this->stdout($file . ' is resaved' . "\n");
             $currentCount++;
             $this->stderr('Saved ' . $currentCount . ' from ' . $totalCount . "\n");
