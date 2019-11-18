@@ -29,7 +29,7 @@ class Gallery extends Widget
             /**
              * @var File $image
              */
-            $img = '  <picture>
+            $img = '<picture>
     <source type="image/webp" srcset="' . $image->getUrl($this->thumbnailAttribute, FormatConverter::FORMAT_WEBP) . '">
     <source type="image/jp2" srcset="' . $image->getUrl($this->thumbnailAttribute, FormatConverter::FORMAT_JPEG2000) . '">
     <source type="image/jxr" srcset="' . $image->getUrl($this->thumbnailAttribute, FormatConverter::FORMAT_JPEG_XR) . '">
