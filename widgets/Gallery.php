@@ -39,7 +39,14 @@ class Gallery extends Widget
                 ]) . '
   </picture>';
 
-            if ($this->dataAttribute !== $this->thumbnailAttribute) {
+            $module = \yii::$app->getModule($image->getImagesModuleId());
+            if ($url = $module->getImageTargetUrl($image)) {
+                $img = Html::a($img, $url, [
+                    'title' => $image->getTitle(),
+                    'data-pjax' => '0',
+                    'target' => '_blank',
+                ]);
+            } else if ($this->dataAttribute !== $this->thumbnailAttribute) {
                 $img = Html::a($img, $image->getUrl($this->dataAttribute), [
                     'title' => $image->getTitle(),
                     'data-pjax' => '0',

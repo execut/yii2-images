@@ -6,6 +6,7 @@ namespace execut\images\plugin;
 
 
 use execut\files\models\File;
+use execut\files\models\FileBase;
 use execut\images\Module;
 use execut\images\Plugin;
 use Imagine\Image\ImageInterface;
@@ -76,7 +77,7 @@ class Files implements Plugin
         }
     }
 
-    public function getSizes($file = NULL)
+    public function getSizes(FileBase $file = NULL)
     {
         return [
             'size_sm' => [
@@ -92,6 +93,10 @@ class Files implements Plugin
                 'mode' => ImageInterface::THUMBNAIL_INSET,
             ],
         ];
+    }
+
+    public function getImageTargetUrl(FileBase $image)
+    {
     }
 
     /**
