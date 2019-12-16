@@ -119,9 +119,9 @@ class Gallery extends Widget
         }
 
         if (count($items) === 1) {
-            echo $items[0]['content'];
+            $result = $items[0]['content'];
         } else {
-            echo Carousel::widget([
+            $result = Carousel::widget([
                 'options' => [
                     'class' => 'slide',
                 ],
@@ -132,7 +132,9 @@ class Gallery extends Widget
                 ],
             ]);
         }
+
+        $this->_registerBundle();
+
+        return $this->_renderContainer($result);
     }
 }
-
-https://detalika.ru/zapchasti/poisk?searchType=&searchType=code&article=N%20%2090813202&brandId=1046&w9_input=&goodsTypeId=&goodsTypeId%5B%5D=2&goodsTypeId%5B%5D=1&shopId=&minPrice=&maxPrice=&deliveryPartnerSelectedId=&isTriplePass=0&isAvailable=0
