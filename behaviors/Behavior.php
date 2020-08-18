@@ -217,6 +217,7 @@ class Behavior extends \yii\base\Behavior
             $formatAttributeName = $thumbnailAttributeName . '_' . $format;
             $fileNameNew = tempnam(sys_get_temp_dir(), 'test') . '.' . $format;
             $command = 'convert -debug all "' . $fileName . '" -quality 50 "' . $fileNameNew . '"';
+            \yii::debug('run command ' . $command);
             exec($command, $output, $return);
             if (!file_exists($fileNameNew)) {
                 throw new Exception('Failed to convert image via command "' . $command . '". Output: ' . var_export($output, true));
