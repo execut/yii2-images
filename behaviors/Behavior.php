@@ -216,7 +216,12 @@ class Behavior extends \yii\base\Behavior
         foreach ($this->getFormats() as $format => $params) {
             $formatAttributeName = $thumbnailAttributeName . '_' . $format;
             $fileNameNew = tempnam(sys_get_temp_dir(), 'test') . '.' . $format;
-            exec('convert "' . $fileName . '" -quality 50 "' . $fileNameNew . '"', $output, $return);
+            $command = 'convert -debug all "' . $fileName . '" -quality 50 "' . $fileNameNew . '"';
+            exec($command, $output, $return);
+            if (!file_exists($fileNameNew)) {
+                throw new Exception('Failed to convert image via command "' . $command . '". Output: ' . var_export($output, true));
+            }
+
             $fileModel = $this->owner;
             $this->openFiles[] = $fileModel->$formatAttributeName = fopen($fileNameNew, 'r+');
         }
