@@ -74,6 +74,10 @@ class Plugin extends \execut\crudFields\Plugin
                     'format' => 'raw',
                     'displayOnly' => true,
                     'value' => function ($form, $widget) use ($value) {
+                        if ($widget->model->isNewRecord) {
+                            return;
+                        }
+
                         return $value($widget->model);
                     },
                 ],
