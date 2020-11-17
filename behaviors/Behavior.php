@@ -187,20 +187,26 @@ class Behavior extends \yii\base\Behavior
         return $width;
     }
 
+    public $sizes = null;
+
     /**
      * @param $file
      * @return mixed
      */
     protected function getSizes()
     {
-        return $this->getModule()->getSizes($this->owner);
+        if ($this->sizes === null) {
+            return $this->getModule()->getSizes($this->owner);
+        }
+
+        return $this->sizes;
     }
 
     /**
      * @param $file
      * @return mixed
      */
-    protected function getFormats()
+    public function getFormats()
     {
         return $this->getFilesModule()->getFormats($this->owner);
     }
